@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ThaiMion Pro Web v3.0</title>
+<style>
+  :root {
+    --bg: #070a0f;
+    --card: #111622;
+    --input-bg: #1a2334;
+    --accent: #00e5ff;
+    --accent-2: #ff3d71;
+    --accent-3: #00e676;
+    --text: #e8eef7;
+    --muted: #7c8ba1;
+    --border: #253146;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, monospace; }
+  body {
+    background: radial-gradient(circle at top, #121c2d 0%, var(--bg) 68%);
+    color: var(--text);
+    padding: 12px;
+    padding-bottom: 54px;
+    min-height: 100vh;
+  }
+  .brand-header {
+    position: relative;
+    text-align: center;
+    padding: 13px 12px 15px;
+    background: linear-gradient(135deg, rgba(0,229,255,0.14), rgba(17,22,34,0.96) 50%, rgba(255,61,113,0.14));
+    border: 1px solid rgba(0,229,255,0.4);
+    border-radius: 13px;
+    margin-bottom: 12px;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.5);
+    overflow: hidden;
+  }
+  .brand-header::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2.5px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-3), var(--accent-2));
+  }
+  .brand-tag {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 800;
+    background: rgba(0,229,255,0.1);
+    border: 1px solid rgba(0,229,255,0.28);
+    padding: 3px 9px;
+    border-radius: 999px;
+    margin-bottom: 6px;
+  }
+  .brand-header h1 {
+    font-size: 19px;
+    font-weight: 900;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+  }
+  .brand-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .stat-pill {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 7px 8px;
+    text-align: center;
+  }
+  .stat-pill span { display: block; font-size: 10px; color: var(--muted); }
+  .stat-pill strong { font-size: 12px; color: #fff; }
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .tab-btn {
+    padding: 10px 6px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 9px;
+    font-weight: 800;
+    font-size: 11px;
+    cursor: pointer;
+    transition: 0.2s;
+    line-height: 1.25;
+  }
+  .tab-btn.math.active {
+    background: rgba(0, 229, 255, 0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.2);
+  }
+  .tab-btn.elec.active {
+    background: rgba(255, 61, 113, 0.15);
+    border-color: var(--accent-2);
+    color: var(--accent-2);
+    box-shadow: 0 0 12px rgba(255, 61, 113, 0.2);
+  }
+  .tab-btn.life.active {
+    background: rgba(0, 230, 118, 0.15);
+    border-color: var(--accent-3);
+    color: var(--accent-3);
+    box-shadow: 0 0 12px rgba(0, 230, 118, 0.2);
+  }
+  .section { display: none; }
+  .section.active { display: block; animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from { opacity: 0.4; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 14px;
+    box-shadow: 0 5px 18px rgba(0,0,0,0.28);
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 7px;
+  }
+  .elec .card-title { color: var(--accent-2); }
+  .life .card-title { color: var(--accent-3); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+  .input-group { margin-bottom: 8px; }
+  label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 3px; }
+  input, select {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    color: #fff;
+    padding: 8px 10px;
+    border-radius: 7px;
+    font-size: 13px;
+    outline: none;
+  }
+  input:focus, select:focus { border-color: var(--accent); }
+  .elec input:focus, .elec select:focus { border-color: var(--accent-2); }
+  .life input:focus, .life select:focus { border-color: var(--accent-3); }
+  .btn-calc {
+    width: 100%;
+    padding: 10px;
+    background: var(--accent);
+    color: #05080d;
+    border: none;
+    border-radius: 8px;
+    font-weight: 900;
+    font-size: 12px;
+    margin-top: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .elec .btn-calc { background: var(--accent-2); color: #fff; }
+  .life .btn-calc { background: var(--accent-3); color: #05110a; }
+  .btn-calc:active { transform: scale(0.98); }
+  .result-box {
+    margin-top: 10px;
+    background: #080b10;
+    border-left: 3px solid var(--accent);
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: #bae6fd;
+    word-wrap: break-word;
+  }
+  .elec .result-box { border-left-color: var(--accent-2); color: #fecdd3; }
+  .life .result-box { border-left-color: var(--accent-3); color: #bbf7d0; }
+  .watermark {
+    position: fixed;
+    bottom: 8px;
+    right: 12px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.42);
+    background: rgba(8, 11, 16, 0.85);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 3px 8px;
+    border-radius: 6px;
+    pointer-events: none;
+    z-index: 999;
+  }
+</style>
+</head>
+<body>
+
+  <div class="brand-header">
+    <div class="brand-tag">Công Nghệ Độc Quyền Do ThaiMion Sáng Lập</div>
+    <h1>ThaiMion Pro Engine</h1>
+    <div class="brand-sub">Toán Học • Kỹ Thuật Điện • Đời Sống Nâng Cao</div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-pill"><span>Hệ Thống</span><strong>3 Phân Khu</strong></div>
+    <div class="stat-pill"><span>Công Cụ</span><strong>13 Bộ Tính</strong></div>
+    <div class="stat-pill"><span>Phiên Bản</span><strong>v3.0 Pro</strong></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn math active" data-tab="math">📐 TOÁN BẬC CAO</button>
+    <button class="tab-btn elec" data-tab="elec">⚡ KỸ THUẬT ĐIỆN</button>
+    <button class="tab-btn life" data-tab="life">🌍 ĐỜI SỐNG</button>
+  </div>
+
+  <!-- TOÁN BẬC CAO -->
+  <div id="math" class="section active">
+    <div class="card">
+      <div class="card-title">1. Định Lý Pytago (a² + b² = c²)</div>
+      <div class="input-group">
+        <label>Chế độ tính:</label>
+        <select id="pyMode">
+          <option value="hyp">Tìm cạnh huyền (c) từ 2 cạnh góc vuông (a, b)</option>
+          <option value="leg">Tìm cạnh góc vuông (b) từ huyền (c) & cạnh (a)</option>
+        </select>
+      </div>
+      <div class="grid-2">
+        <div class="input-group"><label>Cạnh a:</label><input type="number" id="pyA" placeholder="Nhập a"></div>
+        <div class="input-group"><label>Cạnh b (hoặc c):</label><input type="number" id="pyB" placeholder="Nhập b / c"></div>
+      </div>
+      <button class="btn-calc" onclick="calcPytago()">Giải Pytago</button>
+      <div class="result-box" id="resPytago">Kết quả sẽ hiện ở đây...</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">2. Đường Kính, Chu Vi, Diện Tích, Thể Tích</div>
+      <div class="grid-2">
+        <div class="input-group">
+          <label>Nhập thông số từ:</label>
+          <select id="cirType">
+            <option value="r">Bán kính (R)</option>
+            <option value="d">Đường kính (D)</option>
+            <option value="c">Chu vi (C)</option>
+            <option value="s">Diện tích tròn (S)</option>
+          </select>
+        </div>
+        <div class="input-group"><label>Giá trị:</label><input type="number" id="cirVal" placeholder="Nhập số"></div>
+      </div>
+      <button class="btn-calc" onclick="calcCircle()">Phân Tích Hình Học</button>
+      <div class="result-box" id="resCircle">Kết quả sẽ hiện ở đây...</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">3. Giải Phương Trình Bậc 2 (ax² + bx + c = 0)</div>
+      <div class="grid-3">
+        <div class="input-group"><label>Hệ số a:</label><input type="number" id="qa" placeholder="a"></div>
+        <div class="input-group"><label>Hệ số b:</label><input type="number" id="qb" placeholder="b"></div>
+        <div class="input-group"><label>Hệ số c:</label><input type="number" id="qc" placeholder="c"></div>
+      </div>
+      <button class="btn-calc" onclick="calcQuad()">Tìm Nghiệm & Delta</button>
+      <div class="result-box" id="resQuad">Kết quả sẽ hiện ở đây...</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">4. Hệ Phương Trình Bậc Nhất 2 Ẩn (Cramer)</div>
+      <div class="grid-3">
+        <div class="input-group"><label>a₁ (x):</label><input type="number" id="s1a" placeholder="a1"></div>
+        <div class="input-group"><label>b₁ (y):</label><input type="number" id="s1b" placeholder="b1"></div>
+        <div class="input-group"><label>c₁ (=):</label><input type="number" id="s1c" placeholder="c1"></div>
+        <div class="input-group"><label>a₂ (x):</label><input type="number" id="s2a" placeholder="a2"></div>
+        <div class="input-group"><label>b₂ (y):</label><input type="number" id="s2b" placeholder="b2"></div>
+        <div class="input-group"><label>c₂ (=):</label><input type="number" id="s2c" placeholder="c2"></div>
+      </div>
+      <button class="btn-calc" onclick="calcSys2()">Giải Hệ (x, y)</button>
+      <div class="result-box" id="resSys2">Kết quả sẽ hiện ở đây...</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">5. Lượng Giác, Giai Thừa & Logarit</div>
+      <div class="input-group">
+        <label>Nhập số X (Độ cho lượng giác / Số dương cho Log):</label>
+        <input type="number" id="advVal" placeholder="Ví dụ: 45">
+      </div>
+      <button class="btn-calc" onclick="calcAdvMath()">Tính Toàn Bộ</button>
+      <div class="result-box" id="resAdvMath">Kết quả sẽ hiện ở đây...</div>
+    </div>
+  </div>
+    <!-- KỸ THUẬT ĐIỆN -->
+  <div id="elec" class="section elec">
+    <div class="card">
+      <div class="card-title">1. Định Luật Ôm & Công Suất (Nhập 2 ô bất kỳ)</div>
+      <div class="grid-2">
+        <div class="input-group"><label>Điện áp U (Volt):</label><input type="number" id="elU" placeholder="V"></div>
+        <div class="input-group"><label>Dòng điện I (Ampe):</label><input type="number" id="elI" placeholder="A"></div>
+        <div class="input-group"><label>Điện trở R (Ohm):</label><input type="number" id="elR" placeholder="Ω"></div>
+        <div class="input-group"><label>Công suất P (Watt):</label><input type="number" id="elP" placeholder="W"></div>
+      </div>
+      <button class="btn-calc" onclick="calcOhm()">Tính Thông Số Còn Lại</button>
+      <div class="result-box" id="resOhm">Nhập đúng 2 thông số bất kỳ rồi bấm tính...</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">2. Tính Công Suất Điện 3 Pha</div>
+      <div class="grid-3">
+        <div class="input-group"><label>U dây (V):</label><input type="number" id="p3U" value="380"></div>
+        <div class="input-group"><label>Dòng I (A):</label><input type="number" id="p3I" placeholder="Ampe"></div>
+        <div class="input-group"><label>Cos φ:</label><input type="number" id="p3Cos" value="0.85" step="0.01"></div>
+      </div>
+      <button class="btn-calc" onclick="calc3Phase()">Tính Tải 3 Pha</button>
+      <div class="result-box" id="res3Phase">Kết quả sẽ hiện ở đây...</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">3. Tính Sụt Áp Đường Dây Đồng (ρ = 0.0175)</div>
+      <div class="grid-2">
+        <div class="input-group"><label>Nguồn cấp (V):</label><input type="number" id="vdU" value="220"></div>
+        <div class="input-group"><label>Dòng tải (A):</label><input type="number" id="vdI" placeholder="Ampe"></div>
+        <div class="input-group"><label>Chiều dài 1 chiều (m):</label><input type="number" id="vdL" placeholder="Mét"></div>
+        <div class="input-group"><label>Tiết diện dây (mm²):</label><input type="number" id="vdS" placeholder="1.5, 2.5, 4, 6..."></div>
+      </div>
+      <button class="btn-calc" onclick="calcDrop()">Kiểm Tra Sụt Áp</button>
+      <div class="result-box" id="resDrop">Kết quả sẽ hiện ở đây...</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">4. Tính Dung Lượng Pin & Thời Gian Xả</div>
+      <div class="grid-3">
+        <div class="input-group"><label>Áp Pin (V):</label><input type="number" id="batV" value="12.6"></div>
+        <div class="input-group"><label>Dung lượng (Ah):</label><input type="number" id="batAh" placeholder="Ah"></div>
+        <div class="input-group"><label>Tải tiêu thụ (W):</label><input type="number" id="batW" placeholder="Watt"></div>
+      </div>
+      <button class="btn-calc" onclick="calcBattery()">Tính Thời Gian Chạy</button>
+      <div class="result-box" id="resBattery">Kết quả sẽ hiện ở đây...</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">5. Phân Tần Loa Thụ Động Bậc 1 (6dB/Oct)</div>
+      <div class="grid-2">
+        <div class="input-group"><label>Trở kháng loa R (Ω):</label><input type="number" id="xoR" value="8"></div>
+        <div class="input-group"><label>Tần số cắt Fc (Hz):</label><input type="number" id="xoF" value="2500"></div>
+      </div>
+      <button class="btn-calc" onclick="calcCrossover()">Tính Cuộn Cảm L & Tụ C</button>
+      <div class="result-box" id="resCrossover">Kết quả sẽ hiện ở đây...</div>
+    </div>
+  </div>
+
+  <!-- ĐỜI SỐNG NÂNG CAO -->
+  <div id="life" class="section life">
+    <div class="card">
+      <div class="card-title">1. Mô Phỏng Lãi Kép & Tích Lũy Dòng Tiền</div>
+      <div class="grid-2">
+        <div class="input-group"><label>Vốn ban đầu (đồng):</label><input type="number" id="ciP" placeholder="VD: 10000000"></div>
+        <div class="input-group"><label>Góp thêm mỗi kỳ (đồng):</label><input type="number" id="ciAdd" value="0"></div>
+        <div class="input-group"><label>Lãi suất / kỳ (%):</label><input type="number" id="ciRate" step="0.1" placeholder="VD: 0.5"></div>
+        <div class="input-group"><label>Số kỳ (tháng/năm):</label><input type="number" id="ciN" placeholder="VD: 12"></div>
+      </div>
+      <button class="btn-calc" onclick="calcCompound()">Tính Tăng Trưởng Lãi Kép</button>
+      <div class="result-box" id="resCompound">Kết quả sẽ hiện ở đây...</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">2. Ước Tính Tiền Điện Tiêu Thụ Theo Tháng</div>
+      <div class="grid-2">
+        <div class="input-group"><label>Tổng điện năng (kWh):</label><input type="number" id="pwKwh" placeholder="VD: 150"></div>
+        <div class="input-group"><label>Đơn giá ước tính (đ/kWh):</label><input type="number" id="pwPrice" value="2500"></div>
+      </div>
+      <button class="btn-calc" onclick="calcPowerBill()">Tính Chi Phí Điện</button>
+      <div class="result-box" id="resPowerBill">Kết quả sẽ hiện ở đây...</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">3. Phân Tích Biến Động Giá / Lãi Lỗ (%)</div>
+      <div class="grid-2">
+        <div class="input-group"><label>Giá / Giá trị cũ:</label><input type="number" id="dfOld" placeholder="Giá cũ"></div>
+        <div class="input-group"><label>Giá / Giá trị mới:</label><input type="number" id="dfNew" placeholder="Giá mới"></div>
+      </div>
+      <button class="btn-calc" onclick="calcDeltaPct()">Tính Chênh Lệch %</button>
+      <div class="result-box" id="resDeltaPct">Kết quả sẽ hiện ở đây...</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">4. Tính Khối Lượng Vật Liệu (m = D × V)</div>
+      <div class="grid-2">
+        <div class="input-group"><label>Thể tích V (dm³ hoặc lít):</label><input type="number" id="matV" placeholder="Thể tích"></div>
+        <div class="input-group">
+          <label>Khối lượng riêng D (kg/dm³):</label>
+          <select id="matD">
+            <option value="1">Nước (1.0 kg/dm³)</option>
+            <option value="7.85">Sắt / Thép (7.85 kg/dm³)</option>
+            <option value="8.96">Đồng (8.96 kg/dm³)</option>
+            <option value="2.7">Nhôm (2.7 kg/dm³)</option>
+            <option value="2.4">Bê tông (2.4 kg/dm³)</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-calc" onclick="calcMass()">Tính Khối Lượng</button>
+      <div class="result-box" id="resMass">Kết quả sẽ hiện ở đây...</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">5. Chỉ Số BMI & Năng Lượng Tiêu Hao (BMR)</div>
+      <div class="grid-3">
+        <div class="input-group"><label>Cân nặng (kg):</label><input type="number" id="bmW" placeholder="kg"></div>
+        <div class="input-group"><label>Chiều cao (cm):</label><input type="number" id="bmH" placeholder="cm"></div>
+        <div class="input-group"><label>Tuổi:</label><input type="number" id="bmA" value="16"></div>
+      </div>
+      <button class="btn-calc" onclick="calcBMI()">Phân Tích Thể Trạng</button>
+      <div class="result-box" id="resBMI">Kết quả sẽ hiện ở đây...</div>
+    </div>
+  </div>
+
+  <div class="watermark">@ThaiMion</div>
+  <script>
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-tab');
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      const sec = document.getElementById(targetId);
+      if (sec) sec.classList.add('active');
+      this.classList.add('active');
+    });
+  });
+
+  function fmt(n) {
+    return Number.isInteger(n) ? n : parseFloat(n.toFixed(4));
+  }
+
+  function fmtMoney(n) {
+    return Math.round(n).toLocaleString('vi-VN') + " đ";
+  }
+
+  // TOÁN BẬC CAO
+  function calcPytago() {
+    const mode = document.getElementById('pyMode').value;
+    const a = parseFloat(document.getElementById('pyA').value);
+    const b = parseFloat(document.getElementById('pyB').value);
+    const res = document.getElementById('resPytago');
+    if (isNaN(a) || isNaN(b) || a <= 0 || b <= 0) { res.innerHTML = "⚠️ Nhập số dương hợp lệ đi ní!"; return; }
+    if (mode === 'hyp') {
+      const c = Math.sqrt(a*a + b*b);
+      const area = 0.5 * a * b;
+      const angleA = Math.atan(a/b) * (180/Math.PI);
+      res.innerHTML = `• Cạnh huyền (c) = <b>${fmt(c)}</b><br>• Diện tích tam giác = <b>${fmt(area)}</b><br>• Góc đối cạnh a = <b>${fmt(angleA)}°</b> | Góc đối b = <b>${fmt(90-angleA)}°</b>`;
+    } else {
+      if (b <= a) { res.innerHTML = "⚠️ Cạnh huyền (c) phải lớn hơn cạnh góc vuông (a)!"; return; }
+      const leg = Math.sqrt(b*b - a*a);
+      res.innerHTML = `• Cạnh góc vuông còn lại = <b>${fmt(leg)}</b><br>• Diện tích tam giác = <b>${fmt(0.5 * a * leg)}</b>`;
+    }
+  }
+
+  function calcCircle() {
+    const type = document.getElementById('cirType').value;
+    const v = parseFloat(document.getElementById('cirVal').value);
+    const res = document.getElementById('resCircle');
+    if (isNaN(v) || v <= 0) { res.innerHTML = "⚠️ Nhập giá trị lớn hơn 0!"; return; }
+    let r = 0;
+    if (type === 'r') r = v;
+    if (type === 'd') r = v / 2;
+    if (type === 'c') r = v / (2 * Math.PI);
+    if (type === 's') r = Math.sqrt(v / Math.PI);
+
+    const d = r * 2;
+    const c = 2 * Math.PI * r;
+    const s = Math.PI * r * r;
+    const vSphere = (4/3) * Math.PI * Math.pow(r, 3);
+    res.innerHTML = `• Bán kính (R) = <b>${fmt(r)}</b><br>• Đường kính (D) = <b>${fmt(d)}</b><br>• Chu vi (C) = <b>${fmt(c)}</b><br>• Diện tích tròn (S) = <b>${fmt(s)}</b><br>• Thể tích cầu (V) = <b>${fmt(vSphere)}</b>`;
+  }
+
+  function calcQuad() {
+    const a = parseFloat(document.getElementById('qa').value);
+    const b = parseFloat(document.getElementById('qb').value);
+    const c = parseFloat(document.getElementById('qc').value);
+    const res = document.getElementById('resQuad');
+    if (isNaN(a) || isNaN(b) || isNaN(c)) { res.innerHTML = "⚠️ Nhập đủ 3 hệ số a, b, c!"; return; }
+    if (a === 0) {
+      res.innerHTML = b === 0 ? "Phương trình vô nghiệm / vô số nghiệm" : `Phương trình bậc 1: x = <b>${fmt(-c/b)}</b>`;
+      return;
+    }
+    const delta = b*b - 4*a*c;
+    if (delta > 0) {
+      const x1 = (-b + Math.sqrt(delta)) / (2*a);
+      const x2 = (-b - Math.sqrt(delta)) / (2*a);
+      res.innerHTML = `• Delta (Δ) = <b>${fmt(delta)}</b> (> 0)<br>• Nghiệm x₁ = <b>${fmt(x1)}</b><br>• Nghiệm x₂ = <b>${fmt(x2)}</b>`;
+    } else if (delta === 0) {
+      res.innerHTML = `• Delta (Δ) = <b>0</b><br>• Nghiệm kép x₁ = x₂ = <b>${fmt(-b/(2*a))}</b>`;
+    } else {
+      const real = fmt(-b/(2*a));
+      const imag = fmt(Math.sqrt(-delta)/(2*a));
+      res.innerHTML = `• Delta (Δ) = <b>${fmt(delta)}</b> (< 0)<br>• Nghiệm phức x₁ = <b>${real} + ${imag}i</b><br>• Nghiệm phức x₂ = <b>${real} - ${imag}i</b>`;
+    }
+  }
+
+  function calcSys2() {
+    const a1 = parseFloat(document.getElementById('s1a').value);
+    const b1 = parseFloat(document.getElementById('s1b').value);
+    const c1 = parseFloat(document.getElementById('s1c').value);
+    const a2 = parseFloat(document.getElementById('s2a').value);
+    const b2 = parseFloat(document.getElementById('s2b').value);
+    const c2 = parseFloat(document.getElementById('s2c').value);
+    const res = document.getElementById('resSys2');
+    if ([a1,b1,c1,a2,b2,c2].some(v => isNaN(v))) { res.innerHTML = "⚠️ Nhập đủ 6 hệ số a₁, b₁, c₁, a₂, b₂, c₂!"; return; }
+    const D = a1 * b2 - a2 * b1;
+    const Dx = c1 * b2 - c2 * b1;
+    const Dy = a1 * c2 - a2 * c1;
+    if (D !== 0) {
+      res.innerHTML = `• Định thức D = <b>${fmt(D)}</b><br>• Nghiệm x = <b>${fmt(Dx / D)}</b><br>• Nghiệm y = <b>${fmt(Dy / D)}</b>`;
+    } else {
+      res.innerHTML = (Dx === 0 && Dy === 0) ? "• Hệ phương trình có <b>vô số nghiệm</b>." : "• Hệ phương trình <b>vô nghiệm</b> (D = 0).";
+    }
+  }
+
+  function calcAdvMath() {
+    const x = parseFloat(document.getElementById('advVal').value);
+    const res = document.getElementById('resAdvMath');
+    if (isNaN(x)) { res.innerHTML = "⚠️ Nhập số X đi ní!"; return; }
+    const rad = x * (Math.PI / 180);
+    let fact = "Không xác định (số nguyên ≥ 0)";
+    if (Number.isInteger(x) && x >= 0 && x <= 170) {
+      let f = 1;
+      for (let i = 2; i <= x; i++) f *= i;
+      fact = f.toLocaleString('en-US');
+    }
+    const log10 = x > 0 ? fmt(Math.log10(x)) : "NaN";
+    const ln = x > 0 ? fmt(Math.log(x)) : "NaN";
+    res.innerHTML = `• Sin(${x}°) = <b>${fmt(Math.sin(rad))}</b> | Cos(${x}°) = <b>${fmt(Math.cos(rad))}</b><br>• Tan(${x}°) = <b>${fmt(Math.tan(rad))}</b><br>• Log₁₀(x) = <b>${log10}</b> | Ln(x) = <b>${ln}</b><br>• Giai thừa (${x}!) = <b>${fact}</b>`;
+  }
+
+  // KỸ THUẬT ĐIỆN
+  function calcOhm() {
+    let U = parseFloat(document.getElementById('elU').value);
+    let I = parseFloat(document.getElementById('elI').value);
+    let R = parseFloat(document.getElementById('elR').value);
+    let P = parseFloat(document.getElementById('elP').value);
+    const res = document.getElementById('resOhm');
+
+    let count = [!isNaN(U), !isNaN(I), !isNaN(R), !isNaN(P)].filter(Boolean).length;
+    if (count !== 2) { res.innerHTML = "⚠️ Chỉ nhập đúng <b>2 ô</b> bất kỳ, để trống 2 ô cần tìm!"; return; }
+
+    if (!isNaN(U) && !isNaN(I)) { R = U / I; P = U * I; }
+    else if (!isNaN(U) && !isNaN(R)) { I = U / R; P = (U * U) / R; }
+    else if (!isNaN(U) && !isNaN(P)) { I = P / U; R = (U * U) / P; }
+    else if (!isNaN(I) && !isNaN(R)) { U = I * R; P = I * I * R; }
+    else if (!isNaN(I) && !isNaN(P)) { U = P / I; R = P / (I * I); }
+    else if (!isNaN(R) && !isNaN(P)) { U = Math.sqrt(P * R); I = Math.sqrt(P / R); }
+
+    res.innerHTML = `• Điện áp (U) = <b>${fmt(U)} V</b><br>• Dòng điện (I) = <b>${fmt(I)} A</b><br>• Điện trở (R) = <b>${fmt(R)} Ω</b><br>• Công suất (P) = <b>${fmt(P)} W</b> (${fmt(P/1000)} kW)`;
+  }
+
+  function calc3Phase() {
+    const U = parseFloat(document.getElementById('p3U').value);
+    const I = parseFloat(document.getElementById('p3I').value);
+    const cos = parseFloat(document.getElementById('p3Cos').value);
+    const res = document.getElementById('res3Phase');
+    if (isNaN(U) || isNaN(I) || isNaN(cos)) { res.innerHTML = "⚠️ Nhập đủ U, I, Cos φ!"; return; }
+    const S = Math.sqrt(3) * U * I;
+    const P = S * cos;
+    const Q = S * Math.sqrt(Math.max(0, 1 - cos*cos));
+    res.innerHTML = `• Công suất tác dụng (P) = <b>${fmt(P)} W</b> (${fmt(P/1000)} kW)<br>• Công suất biểu kiến (S) = <b>${fmt(S)} VA</b> (${fmt(S/1000)} kVA)<br>• Công suất phản kháng (Q) = <b>${fmt(Q)} VAr</b>`;
+  }
+
+  function calcDrop() {
+    const U = parseFloat(document.getElementById('vdU').value);
+    const I = parseFloat(document.getElementById('vdI').value);
+    const L = parseFloat(document.getElementById('vdL').value);
+    const S = parseFloat(document.getElementById('vdS').value);
+    const res = document.getElementById('resDrop');
+    if (isNaN(U) || isNaN(I) || isNaN(L) || isNaN(S) || S <= 0) { res.innerHTML = "⚠️ Nhập đầy đủ thông số dây dẫn!"; return; }
+    const rho = 0.0175;
+    const R_wire = (rho * 2 * L) / S;
+    const vDrop = I * R_wire;
+    const uEnd = U - vDrop;
+    const pct = (vDrop / U) * 100;
+    const pLoss = I * I * R_wire;
+    const warn = pct > 5 ? "🔴 Sụt áp quá 5% (Nên tăng tiết diện dây!)" : "🟢 Sụt áp an toàn";
+    res.innerHTML = `• Điện trở tổng dây = <b>${fmt(R_wire)} Ω</b><br>• Sụt áp trên dây = <b>${fmt(vDrop)} V</b> (${fmt(pct)}%)<br>• Điện áp cuối nguồn = <b>${fmt(uEnd)} V</b><br>• Hao phí tỏa nhiệt = <b>${fmt(pLoss)} W</b><br>• Đánh giá: <b>${warn}</b>`;
+  }
+
+  function calcBattery() {
+    const V = parseFloat(document.getElementById('batV').value);
+    const Ah = parseFloat(document.getElementById('batAh').value);
+    const W = parseFloat(document.getElementById('batW').value);
+    const res = document.getElementById('resBattery');
+    if (isNaN(V) || isNaN(Ah) || isNaN(W) || W <= 0) { res.innerHTML = "⚠️ Nhập đủ V, Ah và Watt tải!"; return; }
+    const Wh = V * Ah;
+    const current = W / V;
+    const hoursIdeal = Wh / W;
+    const hoursReal = hoursIdeal * 0.85;
+    res.innerHTML = `• Tổng năng lượng = <b>${fmt(Wh)} Wh</b><br>• Dòng xả liên tục = <b>${fmt(current)} A</b><br>• Thời gian lý thuyết = <b>${fmt(hoursIdeal)} giờ</b><br>• Thời gian thực tế (~85%) = <b>${fmt(hoursReal)} giờ</b> (${Math.floor(hoursReal)}h ${Math.round((hoursReal%1)*60)}p)`;
+  }
+
+  function calcCrossover() {
+    const R = parseFloat(document.getElementById('xoR').value);
+    const F = parseFloat(document.getElementById('xoF').value);
+    const res = document.getElementById('resCrossover');
+    if (isNaN(R) || isNaN(F) || R <= 0 || F <= 0) { res.innerHTML = "⚠️ Nhập trở kháng R và tần số Fc lớn hơn 0!"; return; }
+    const L_mH = (R / (2 * Math.PI * F)) * 1000;
+    const C_uF = (1 / (2 * Math.PI * F * R)) * 1e6;
+    res.innerHTML = `• Cuộn cảm Bass (Low-pass L) ≈ <b>${fmt(L_mH)} mH</b><br>• Tụ điện Treble (High-pass C) ≈ <b>${fmt(C_uF)} µF</b>`;
+  }
+
+  // ĐỜI SỐNG NÂNG CAO
+  function calcCompound() {
+    const P = parseFloat(document.getElementById('ciP').value) || 0;
+    const add = parseFloat(document.getElementById('ciAdd').value) || 0;
+    const r = (parseFloat(document.getElementById('ciRate').value) || 0) / 100;
+    const n = parseInt(document.getElementById('ciN').value);
+    const res = document.getElementById('resCompound');
+    if (isNaN(n) || n <= 0) { res.innerHTML = "⚠️ Nhập số kỳ lớn hơn 0!"; return; }
+
+    let total = P;
+    for (let i = 0; i < n; i++) {
+      total = total * (1 + r) + add;
+    }
+    const principal = P + add * n;
+    const profit = total - principal;
+    res.innerHTML = `• Tổng tiền nhận được = <b>${fmtMoney(total)}</b><br>• Tổng vốn tự bỏ ra = <b>${fmtMoney(principal)}</b><br>• Lãi ròng sinh ra = <b>${fmtMoney(profit)}</b>`;
+  }
+
+  function calcPowerBill() {
+    const kwh = parseFloat(document.getElementById('pwKwh').value);
+    const price = parseFloat(document.getElementById('pwPrice').value);
+    const res = document.getElementById('resPowerBill');
+    if (isNaN(kwh) || isNaN(price) || kwh < 0 || price <= 0) { res.innerHTML = "⚠️ Nhập số kWh và đơn giá hợp lệ!"; return; }
+    const raw = kwh * price;
+    const vat = raw * 1.08;
+    res.innerHTML = `• Tiền điện ước tính (chưa thuế) = <b>${fmtMoney(raw)}</b><br>• Tạm tính gồm VAT 8% = <b>${fmtMoney(vat)}</b>`;
+  }
+
+  function calcDeltaPct() {
+    const oldV = parseFloat(document.getElementById('dfOld').value);
+    const newV = parseFloat(document.getElementById('dfNew').value);
+    const res = document.getElementById('resDeltaPct');
+    if (isNaN(oldV) || isNaN(newV) || oldV === 0) { res.innerHTML = "⚠️ Nhập giá cũ (khác 0) và giá mới!"; return; }
+    const diff = newV - oldV;
+    const pct = (diff / Math.abs(oldV)) * 100;
+    const trend = diff > 0 ? "📈 Tăng" : (diff < 0 ? "📉 Giảm" : "➖ Không đổi");
+    res.innerHTML = `• Biến động: <b>${trend} ${fmt(Math.abs(pct))}%</b><br>• Chênh lệch tuyệt đối = <b>${diff > 0 ? '+' : ''}${fmt(diff)}</b>`;
+  }
+
+  function calcMass() {
+    const V = parseFloat(document.getElementById('matV').value);
+    const D = parseFloat(document.getElementById('matD').value);
+    const res = document.getElementById('resMass');
+    if (isNaN(V) || V <= 0) { res.innerHTML = "⚠️ Nhập thể tích lớn hơn 0!"; return; }
+    const m = V * D;
+    res.innerHTML = `• Khối lượng ước tính = <b>${fmt(m)} kg</b> (${fmt(m/1000)} tấn)`;
+  }
+
+  function calcBMI() {
+    const w = parseFloat(document.getElementById('bmW').value);
+    const hCm = parseFloat(document.getElementById('bmH').value);
+    const age = parseFloat(document.getElementById('bmA').value) || 16;
+    const res = document.getElementById('resBMI');
+    if (isNaN(w) || isNaN(hCm) || w <= 0 || hCm <= 0) { res.innerHTML = "⚠️ Nhập cân nặng và chiều cao hợp lệ!"; return; }
+    const hM = hCm / 100;
+    const bmi = w / (hM * hM);
+    const bmr = 10 * w + 6.25 * hCm - 5 * age + 5;
+    let status = "Bình thường";
+    if (bmi < 18.5) status = "Gầy";
+    else if (bmi >= 25 && bmi < 30) status = "Thừa cân";
+    else if (bmi >= 30) status = "Béo phì";
+    res.innerHTML = `• Chỉ số BMI = <b>${fmt(bmi)}</b> (${status})<br>• Năng lượng nền (BMR) ≈ <b>${Math.round(bmr)} kcal/ngày</b>`;
+  }
+</script>
+
+</body>
+</html>
