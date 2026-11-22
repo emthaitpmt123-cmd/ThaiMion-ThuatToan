@@ -1,422 +1,613 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>ThaiMion Pro Web v3.0</title>
-<style>
-  :root {
-    --bg: #070a0f;
-    --card: #111622;
-    --input-bg: #1a2334;
-    --accent: #00e5ff;
-    --accent-2: #ff3d71;
-    --accent-3: #00e676;
-    --text: #e8eef7;
-    --muted: #7c8ba1;
-    --border: #253146;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, monospace; }
-  body {
-    background: radial-gradient(circle at top, #121c2d 0%, var(--bg) 68%);
-    color: var(--text);
-    padding: 12px;
-    padding-bottom: 54px;
-    min-height: 100vh;
-  }
-  .brand-header {
-    position: relative;
-    text-align: center;
-    padding: 13px 12px 15px;
-    background: linear-gradient(135deg, rgba(0,229,255,0.14), rgba(17,22,34,0.96) 50%, rgba(255,61,113,0.14));
-    border: 1px solid rgba(0,229,255,0.4);
-    border-radius: 13px;
-    margin-bottom: 12px;
-    box-shadow: 0 10px 28px rgba(0,0,0,0.5);
-    overflow: hidden;
-  }
-  .brand-header::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0; height: 2.5px;
-    background: linear-gradient(90deg, var(--accent), var(--accent-3), var(--accent-2));
-  }
-  .brand-tag {
-    display: inline-block;
-    font-size: 10px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 800;
-    background: rgba(0,229,255,0.1);
-    border: 1px solid rgba(0,229,255,0.28);
-    padding: 3px 9px;
-    border-radius: 999px;
-    margin-bottom: 6px;
-  }
-  .brand-header h1 {
-    font-size: 19px;
-    font-weight: 900;
-    letter-spacing: 0.7px;
-    text-transform: uppercase;
-  }
-  .brand-sub {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 3px;
-  }
-  .stats-bar {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-  .stat-pill {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 9px;
-    padding: 7px 8px;
-    text-align: center;
-  }
-  .stat-pill span { display: block; font-size: 10px; color: var(--muted); }
-  .stat-pill strong { font-size: 12px; color: #fff; }
-  .tabs {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    margin-bottom: 14px;
-  }
-  .tab-btn {
-    padding: 10px 6px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    color: var(--muted);
-    border-radius: 9px;
-    font-weight: 800;
-    font-size: 11px;
-    cursor: pointer;
-    transition: 0.2s;
-    line-height: 1.25;
-  }
-  .tab-btn.math.active {
-    background: rgba(0, 229, 255, 0.15);
-    border-color: var(--accent);
-    color: var(--accent);
-    box-shadow: 0 0 12px rgba(0, 229, 255, 0.2);
-  }
-  .tab-btn.elec.active {
-    background: rgba(255, 61, 113, 0.15);
-    border-color: var(--accent-2);
-    color: var(--accent-2);
-    box-shadow: 0 0 12px rgba(255, 61, 113, 0.2);
-  }
-  .tab-btn.life.active {
-    background: rgba(0, 230, 118, 0.15);
-    border-color: var(--accent-3);
-    color: var(--accent-3);
-    box-shadow: 0 0 12px rgba(0, 230, 118, 0.2);
-  }
-  .section { display: none; }
-  .section.active { display: block; animation: fadeIn 0.2s ease; }
-  @keyframes fadeIn { from { opacity: 0.4; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 14px;
-    box-shadow: 0 5px 18px rgba(0,0,0,0.28);
-  }
-  .card-title {
-    font-size: 13px;
-    font-weight: 800;
-    color: var(--accent);
-    margin-bottom: 10px;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 7px;
-  }
-  .elec .card-title { color: var(--accent-2); }
-  .life .card-title { color: var(--accent-3); }
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
-  .input-group { margin-bottom: 8px; }
-  label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 3px; }
-  input, select {
-    width: 100%;
-    background: var(--input-bg);
-    border: 1px solid var(--border);
-    color: #fff;
-    padding: 8px 10px;
-    border-radius: 7px;
-    font-size: 13px;
-    outline: none;
-  }
-  input:focus, select:focus { border-color: var(--accent); }
-  .elec input:focus, .elec select:focus { border-color: var(--accent-2); }
-  .life input:focus, .life select:focus { border-color: var(--accent-3); }
-  .btn-calc {
-    width: 100%;
-    padding: 10px;
-    background: var(--accent);
-    color: #05080d;
-    border: none;
-    border-radius: 8px;
-    font-weight: 900;
-    font-size: 12px;
-    margin-top: 4px;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .elec .btn-calc { background: var(--accent-2); color: #fff; }
-  .life .btn-calc { background: var(--accent-3); color: #05110a; }
-  .btn-calc:active { transform: scale(0.98); }
-  .result-box {
-    margin-top: 10px;
-    background: #080b10;
-    border-left: 3px solid var(--accent);
-    padding: 10px;
-    border-radius: 6px;
-    font-size: 12.5px;
-    line-height: 1.55;
-    color: #bae6fd;
-    word-wrap: break-word;
-  }
-  .elec .result-box { border-left-color: var(--accent-2); color: #fecdd3; }
-  .life .result-box { border-left-color: var(--accent-3); color: #bbf7d0; }
-  .watermark {
-    position: fixed;
-    bottom: 8px;
-    right: 12px;
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.42);
-    background: rgba(8, 11, 16, 0.85);
-    border: 1px solid rgba(255,255,255,0.08);
-    padding: 3px 8px;
-    border-radius: 6px;
-    pointer-events: none;
-    z-index: 999;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThaiMion Pro Web v3.2</title>
+  <style>
+    :root {
+      --bg: #070a0f;
+      --card: #111622;
+      --input-bg: #1a2334;
+      --accent: #00e5ff;
+      --accent-2: #ff3d71;
+      --accent-3: #00e676;
+      --text: #e8eef7;
+      --muted: #7c8ba1;
+      --border: #253146;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      padding: 14px 14px 48px;
+      line-height: 1.55;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .lhcv-badge {
+      font-size: 11.5px;
+      color: #a9bed8;
+      background: rgba(17, 22, 34, 0.92);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.2px;
+    }
+
+    .lhcv-badge b {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #10192b 0%, #17233b 65%, #1d1633 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      color: var(--accent);
+      background: rgba(0, 229, 255, 0.12);
+      border: 1px solid rgba(0, 229, 255, 0.3);
+      padding: 3px 9px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+
+    .hero h1 {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .hero p {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .tab-btn {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 13px 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 48px;
+      transition: 0.15s ease;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, #0099cc, #00e5ff);
+      color: #051018;
+      border-color: transparent;
+    }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 15px;
+      margin-bottom: 14px;
+    }
+
+    .card h2 {
+      font-size: 16px;
+      margin-bottom: 6px;
+      color: var(--accent);
+    }
+
+    .card h3 {
+      font-size: 15px;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .card p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 12.5px;
+      color: #c6d3e6;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    input, select {
+      width: 100%;
+      background: var(--input-bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 12px;
+      font-size: 14px;
+      margin-bottom: 11px;
+      min-height: 44px;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .row-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .btn {
+      width: 100%;
+      background: linear-gradient(135deg, #ff2a6d, #ff5e92);
+      color: #fff;
+      border: none;
+      border-radius: 11px;
+      padding: 13px 14px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      min-height: 48px;
+      margin-top: 2px;
+    }
+
+    .btn:active { transform: scale(0.99); }
+
+    .btn-calm {
+      background: linear-gradient(135deg, #00897b, #00bfa5);
+      color: #041310;
+    }
+
+    .result-box {
+      background: #0b0f19;
+      border-left: 3px solid var(--accent-2);
+      border-radius: 10px;
+      padding: 13px;
+      margin-top: 12px;
+      font-size: 13.5px;
+      color: var(--text);
+    }
+
+    .calm-box {
+      border-left-color: var(--accent-3);
+    }
+
+    .watermark {
+      position: fixed;
+      right: 12px;
+      bottom: 10px;
+      font-size: 11px;
+      color: rgba(124, 139, 161, 0.45);
+      pointer-events: none;
+      z-index: 5;
+    }
+  </style>
 </head>
 <body>
 
-  <div class="brand-header">
-    <div class="brand-tag">Công Nghệ Độc Quyền Do ThaiMion Sáng Lập</div>
-    <h1>ThaiMion Pro Engine</h1>
-    <div class="brand-sub">Toán Học • Kỹ Thuật Điện • Đời Sống Nâng Cao</div>
+<div class="topbar">
+  <div class="lhcv-badge">LHCV: <b>0961818524</b></div>
+</div>
+
+<div class="hero">
+  <span class="tag">CÔNG NGHỆ ĐỘC QUYỀN • THAIMION PRO</span>
+  <h1>ThaiMion Pro Web v3.2</h1>
+  <p>Toán • Điện • Đời Sống • Kế Toán • Tịnh Tâm • Kỹ Năng Sống</p>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="math">Toán Bậc Cao</button>
+  <button class="tab-btn" data-tab="elec">Kỹ Thuật Điện</button>
+  <button class="tab-btn" data-tab="life">Đời Sống</button>
+  <button class="tab-btn" data-tab="accounting">Học Viên Kế Toán</button>
+  <button class="tab-btn" data-tab="peace">🪷 Tịnh Tâm</button>
+  <button class="tab-btn" data-tab="skills">Kỹ Năng Sống</button>
+</div>
+<section class="section active" id="math">
+  <div class="card">
+    <h2>1. Định Lý Pytago &amp; Tam Giác Vuông</h2>
+    <p>Tính cạnh huyền, cạnh góc vuông, diện tích và các góc nhọn tam giác vuông.</p>
+    <label>Chế độ tính:</label>
+    <select id="pyMode">
+      <option value="hyp">Tìm cạnh huyền (biết 2 cạnh góc vuông a, b)</option>
+      <option value="leg">Tìm cạnh góc vuông còn lại (nhập a là cạnh vuông, b là cạnh huyền)</option>
+    </select>
+    <div class="row">
+      <div>
+        <label>Cạnh a:</label>
+        <input type="number" id="pyA" placeholder="VD: 3">
+      </div>
+      <div>
+        <label>Cạnh b (hoặc huyền c):</label>
+        <input type="number" id="pyB" placeholder="VD: 4">
+      </div>
+    </div>
+    <button class="btn" onclick="calcPytago()">TÍNH PYTAGO</button>
+    <div class="result-box" id="resPytago">Nhập thông số rồi bấm tính...</div>
   </div>
 
-  <div class="stats-bar">
-    <div class="stat-pill"><span>Hệ Thống</span><strong>3 Phân Khu</strong></div>
-    <div class="stat-pill"><span>Công Cụ</span><strong>13 Bộ Tính</strong></div>
-    <div class="stat-pill"><span>Phiên Bản</span><strong>v3.0 Pro</strong></div>
-  </div>
-
-  <div class="tabs">
-    <button class="tab-btn math active" data-tab="math">📐 TOÁN BẬC CAO</button>
-    <button class="tab-btn elec" data-tab="elec">⚡ KỸ THUẬT ĐIỆN</button>
-    <button class="tab-btn life" data-tab="life">🌍 ĐỜI SỐNG</button>
-  </div>
-
-  <!-- TOÁN BẬC CAO -->
-  <div id="math" class="section active">
-    <div class="card">
-      <div class="card-title">1. Định Lý Pytago (a² + b² = c²)</div>
-      <div class="input-group">
-        <label>Chế độ tính:</label>
-        <select id="pyMode">
-          <option value="hyp">Tìm cạnh huyền (c) từ 2 cạnh góc vuông (a, b)</option>
-          <option value="leg">Tìm cạnh góc vuông (b) từ huyền (c) & cạnh (a)</option>
+  <div class="card">
+    <h2>2. Hình Tròn &amp; Hình Cầu</h2>
+    <p>Quy đổi nhanh từ bán kính, đường kính, chu vi hoặc diện tích ra các thông số còn lại.</p>
+    <div class="row">
+      <div>
+        <label>Loại giá trị nhập:</label>
+        <select id="cirType">
+          <option value="r">Bán kính (R)</option>
+          <option value="d">Đường kính (D)</option>
+          <option value="c">Chu vi (C)</option>
+          <option value="s">Diện tích tròn (S)</option>
         </select>
       </div>
-      <div class="grid-2">
-        <div class="input-group"><label>Cạnh a:</label><input type="number" id="pyA" placeholder="Nhập a"></div>
-        <div class="input-group"><label>Cạnh b (hoặc c):</label><input type="number" id="pyB" placeholder="Nhập b / c"></div>
+      <div>
+        <label>Giá trị:</label>
+        <input type="number" id="cirVal" placeholder="VD: 5">
       </div>
-      <button class="btn-calc" onclick="calcPytago()">Giải Pytago</button>
-      <div class="result-box" id="resPytago">Kết quả sẽ hiện ở đây...</div>
     </div>
-
-    <div class="card">
-      <div class="card-title">2. Đường Kính, Chu Vi, Diện Tích, Thể Tích</div>
-      <div class="grid-2">
-        <div class="input-group">
-          <label>Nhập thông số từ:</label>
-          <select id="cirType">
-            <option value="r">Bán kính (R)</option>
-            <option value="d">Đường kính (D)</option>
-            <option value="c">Chu vi (C)</option>
-            <option value="s">Diện tích tròn (S)</option>
-          </select>
-        </div>
-        <div class="input-group"><label>Giá trị:</label><input type="number" id="cirVal" placeholder="Nhập số"></div>
-      </div>
-      <button class="btn-calc" onclick="calcCircle()">Phân Tích Hình Học</button>
-      <div class="result-box" id="resCircle">Kết quả sẽ hiện ở đây...</div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">3. Giải Phương Trình Bậc 2 (ax² + bx + c = 0)</div>
-      <div class="grid-3">
-        <div class="input-group"><label>Hệ số a:</label><input type="number" id="qa" placeholder="a"></div>
-        <div class="input-group"><label>Hệ số b:</label><input type="number" id="qb" placeholder="b"></div>
-        <div class="input-group"><label>Hệ số c:</label><input type="number" id="qc" placeholder="c"></div>
-      </div>
-      <button class="btn-calc" onclick="calcQuad()">Tìm Nghiệm & Delta</button>
-      <div class="result-box" id="resQuad">Kết quả sẽ hiện ở đây...</div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">4. Hệ Phương Trình Bậc Nhất 2 Ẩn (Cramer)</div>
-      <div class="grid-3">
-        <div class="input-group"><label>a₁ (x):</label><input type="number" id="s1a" placeholder="a1"></div>
-        <div class="input-group"><label>b₁ (y):</label><input type="number" id="s1b" placeholder="b1"></div>
-        <div class="input-group"><label>c₁ (=):</label><input type="number" id="s1c" placeholder="c1"></div>
-        <div class="input-group"><label>a₂ (x):</label><input type="number" id="s2a" placeholder="a2"></div>
-        <div class="input-group"><label>b₂ (y):</label><input type="number" id="s2b" placeholder="b2"></div>
-        <div class="input-group"><label>c₂ (=):</label><input type="number" id="s2c" placeholder="c2"></div>
-      </div>
-      <button class="btn-calc" onclick="calcSys2()">Giải Hệ (x, y)</button>
-      <div class="result-box" id="resSys2">Kết quả sẽ hiện ở đây...</div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">5. Lượng Giác, Giai Thừa & Logarit</div>
-      <div class="input-group">
-        <label>Nhập số X (Độ cho lượng giác / Số dương cho Log):</label>
-        <input type="number" id="advVal" placeholder="Ví dụ: 45">
-      </div>
-      <button class="btn-calc" onclick="calcAdvMath()">Tính Toàn Bộ</button>
-      <div class="result-box" id="resAdvMath">Kết quả sẽ hiện ở đây...</div>
-    </div>
-  </div>
-    <!-- KỸ THUẬT ĐIỆN -->
-  <div id="elec" class="section elec">
-    <div class="card">
-      <div class="card-title">1. Định Luật Ôm & Công Suất (Nhập 2 ô bất kỳ)</div>
-      <div class="grid-2">
-        <div class="input-group"><label>Điện áp U (Volt):</label><input type="number" id="elU" placeholder="V"></div>
-        <div class="input-group"><label>Dòng điện I (Ampe):</label><input type="number" id="elI" placeholder="A"></div>
-        <div class="input-group"><label>Điện trở R (Ohm):</label><input type="number" id="elR" placeholder="Ω"></div>
-        <div class="input-group"><label>Công suất P (Watt):</label><input type="number" id="elP" placeholder="W"></div>
-      </div>
-      <button class="btn-calc" onclick="calcOhm()">Tính Thông Số Còn Lại</button>
-      <div class="result-box" id="resOhm">Nhập đúng 2 thông số bất kỳ rồi bấm tính...</div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">2. Tính Công Suất Điện 3 Pha</div>
-      <div class="grid-3">
-        <div class="input-group"><label>U dây (V):</label><input type="number" id="p3U" value="380"></div>
-        <div class="input-group"><label>Dòng I (A):</label><input type="number" id="p3I" placeholder="Ampe"></div>
-        <div class="input-group"><label>Cos φ:</label><input type="number" id="p3Cos" value="0.85" step="0.01"></div>
-      </div>
-      <button class="btn-calc" onclick="calc3Phase()">Tính Tải 3 Pha</button>
-      <div class="result-box" id="res3Phase">Kết quả sẽ hiện ở đây...</div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">3. Tính Sụt Áp Đường Dây Đồng (ρ = 0.0175)</div>
-      <div class="grid-2">
-        <div class="input-group"><label>Nguồn cấp (V):</label><input type="number" id="vdU" value="220"></div>
-        <div class="input-group"><label>Dòng tải (A):</label><input type="number" id="vdI" placeholder="Ampe"></div>
-        <div class="input-group"><label>Chiều dài 1 chiều (m):</label><input type="number" id="vdL" placeholder="Mét"></div>
-        <div class="input-group"><label>Tiết diện dây (mm²):</label><input type="number" id="vdS" placeholder="1.5, 2.5, 4, 6..."></div>
-      </div>
-      <button class="btn-calc" onclick="calcDrop()">Kiểm Tra Sụt Áp</button>
-      <div class="result-box" id="resDrop">Kết quả sẽ hiện ở đây...</div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">4. Tính Dung Lượng Pin & Thời Gian Xả</div>
-      <div class="grid-3">
-        <div class="input-group"><label>Áp Pin (V):</label><input type="number" id="batV" value="12.6"></div>
-        <div class="input-group"><label>Dung lượng (Ah):</label><input type="number" id="batAh" placeholder="Ah"></div>
-        <div class="input-group"><label>Tải tiêu thụ (W):</label><input type="number" id="batW" placeholder="Watt"></div>
-      </div>
-      <button class="btn-calc" onclick="calcBattery()">Tính Thời Gian Chạy</button>
-      <div class="result-box" id="resBattery">Kết quả sẽ hiện ở đây...</div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">5. Phân Tần Loa Thụ Động Bậc 1 (6dB/Oct)</div>
-      <div class="grid-2">
-        <div class="input-group"><label>Trở kháng loa R (Ω):</label><input type="number" id="xoR" value="8"></div>
-        <div class="input-group"><label>Tần số cắt Fc (Hz):</label><input type="number" id="xoF" value="2500"></div>
-      </div>
-      <button class="btn-calc" onclick="calcCrossover()">Tính Cuộn Cảm L & Tụ C</button>
-      <div class="result-box" id="resCrossover">Kết quả sẽ hiện ở đây...</div>
-    </div>
+    <button class="btn" onclick="calcCircle()">TÍNH HÌNH TRÒN &amp; CẦU</button>
+    <div class="result-box" id="resCircle">Nhập giá trị rồi bấm tính...</div>
   </div>
 
-  <!-- ĐỜI SỐNG NÂNG CAO -->
-  <div id="life" class="section life">
-    <div class="card">
-      <div class="card-title">1. Mô Phỏng Lãi Kép & Tích Lũy Dòng Tiền</div>
-      <div class="grid-2">
-        <div class="input-group"><label>Vốn ban đầu (đồng):</label><input type="number" id="ciP" placeholder="VD: 10000000"></div>
-        <div class="input-group"><label>Góp thêm mỗi kỳ (đồng):</label><input type="number" id="ciAdd" value="0"></div>
-        <div class="input-group"><label>Lãi suất / kỳ (%):</label><input type="number" id="ciRate" step="0.1" placeholder="VD: 0.5"></div>
-        <div class="input-group"><label>Số kỳ (tháng/năm):</label><input type="number" id="ciN" placeholder="VD: 12"></div>
+  <div class="card">
+    <h2>3. Phương Trình Bậc 2 (ax² + bx + c = 0)</h2>
+    <p>Giải Delta và tìm nghiệm thực hoặc nghiệm phức.</p>
+    <div class="row-3">
+      <div>
+        <label>Hệ số a:</label>
+        <input type="number" id="qa" placeholder="a">
       </div>
-      <button class="btn-calc" onclick="calcCompound()">Tính Tăng Trưởng Lãi Kép</button>
-      <div class="result-box" id="resCompound">Kết quả sẽ hiện ở đây...</div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">2. Ước Tính Tiền Điện Tiêu Thụ Theo Tháng</div>
-      <div class="grid-2">
-        <div class="input-group"><label>Tổng điện năng (kWh):</label><input type="number" id="pwKwh" placeholder="VD: 150"></div>
-        <div class="input-group"><label>Đơn giá ước tính (đ/kWh):</label><input type="number" id="pwPrice" value="2500"></div>
+      <div>
+        <label>Hệ số b:</label>
+        <input type="number" id="qb" placeholder="b">
       </div>
-      <button class="btn-calc" onclick="calcPowerBill()">Tính Chi Phí Điện</button>
-      <div class="result-box" id="resPowerBill">Kết quả sẽ hiện ở đây...</div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">3. Phân Tích Biến Động Giá / Lãi Lỗ (%)</div>
-      <div class="grid-2">
-        <div class="input-group"><label>Giá / Giá trị cũ:</label><input type="number" id="dfOld" placeholder="Giá cũ"></div>
-        <div class="input-group"><label>Giá / Giá trị mới:</label><input type="number" id="dfNew" placeholder="Giá mới"></div>
+      <div>
+        <label>Hệ số c:</label>
+        <input type="number" id="qc" placeholder="c">
       </div>
-      <button class="btn-calc" onclick="calcDeltaPct()">Tính Chênh Lệch %</button>
-      <div class="result-box" id="resDeltaPct">Kết quả sẽ hiện ở đây...</div>
     </div>
-
-    <div class="card">
-      <div class="card-title">4. Tính Khối Lượng Vật Liệu (m = D × V)</div>
-      <div class="grid-2">
-        <div class="input-group"><label>Thể tích V (dm³ hoặc lít):</label><input type="number" id="matV" placeholder="Thể tích"></div>
-        <div class="input-group">
-          <label>Khối lượng riêng D (kg/dm³):</label>
-          <select id="matD">
-            <option value="1">Nước (1.0 kg/dm³)</option>
-            <option value="7.85">Sắt / Thép (7.85 kg/dm³)</option>
-            <option value="8.96">Đồng (8.96 kg/dm³)</option>
-            <option value="2.7">Nhôm (2.7 kg/dm³)</option>
-            <option value="2.4">Bê tông (2.4 kg/dm³)</option>
-          </select>
-        </div>
-      </div>
-      <button class="btn-calc" onclick="calcMass()">Tính Khối Lượng</button>
-      <div class="result-box" id="resMass">Kết quả sẽ hiện ở đây...</div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">5. Chỉ Số BMI & Năng Lượng Tiêu Hao (BMR)</div>
-      <div class="grid-3">
-        <div class="input-group"><label>Cân nặng (kg):</label><input type="number" id="bmW" placeholder="kg"></div>
-        <div class="input-group"><label>Chiều cao (cm):</label><input type="number" id="bmH" placeholder="cm"></div>
-        <div class="input-group"><label>Tuổi:</label><input type="number" id="bmA" value="16"></div>
-      </div>
-      <button class="btn-calc" onclick="calcBMI()">Phân Tích Thể Trạng</button>
-      <div class="result-box" id="resBMI">Kết quả sẽ hiện ở đây...</div>
-    </div>
+    <button class="btn" onclick="calcQuad()">GIẢI PHƯƠNG TRÌNH BẬC 2</button>
+    <div class="result-box" id="resQuad">Nhập a, b, c rồi bấm giải...</div>
   </div>
 
-  <div class="watermark">@ThaiMion</div>
-  <script>
+  <div class="card">
+    <h2>4. Hệ Phương Trình Bậc Nhất 2 Ẩn</h2>
+    <p>Giải hệ: a₁x + b₁y = c₁ và a₂x + b₂y = c₂ bằng định thức Cramer.</p>
+    <div class="row-3">
+      <div><label>a₁:</label><input type="number" id="s1a" placeholder="a1"></div>
+      <div><label>b₁:</label><input type="number" id="s1b" placeholder="b1"></div>
+      <div><label>c₁:</label><input type="number" id="s1c" placeholder="c1"></div>
+    </div>
+    <div class="row-3">
+      <div><label>a₂:</label><input type="number" id="s2a" placeholder="a2"></div>
+      <div><label>b₂:</label><input type="number" id="s2b" placeholder="b2"></div>
+      <div><label>c₂:</label><input type="number" id="s2c" placeholder="c2"></div>
+    </div>
+    <button class="btn" onclick="calcSys2()">GIẢI HỆ 2 ẨN</button>
+    <div class="result-box" id="resSys2">Nhập 6 hệ số rồi bấm giải...</div>
+  </div>
+
+  <div class="card">
+    <h2>5. Lượng Giác, Logarit &amp; Giai Thừa</h2>
+    <p>Tính Sin, Cos, Tan (theo độ), Log₁₀, Ln và giai thừa.</p>
+    <label>Giá trị X:</label>
+    <input type="number" id="advVal" placeholder="VD: 30 hoặc 5">
+    <button class="btn" onclick="calcAdvMath()">TÍNH TOÁN NÂNG CAO</button>
+    <div class="result-box" id="resAdvMath">Nhập số X rồi bấm tính...</div>
+  </div>
+</section>
+
+<section class="section" id="elec">
+  <div class="card">
+    <h2>1. Định Luật Ôm &amp; Công Suất (Nhập đúng 2 ô bất kỳ)</h2>
+    <p>Để trống 2 thông số cần tìm, nhập đúng 2 ô có sẵn.</p>
+    <div class="row">
+      <div><label>Điện áp U (Volt):</label><input type="number" id="elU" placeholder="V"></div>
+      <div><label>Dòng điện I (Ampe):</label><input type="number" id="elI" placeholder="A"></div>
+    </div>
+    <div class="row">
+      <div><label>Điện trở R (Ohm):</label><input type="number" id="elR" placeholder="Ω"></div>
+      <div><label>Công suất P (Watt):</label><input type="number" id="elP" placeholder="W"></div>
+    </div>
+    <button class="btn" onclick="calcOhm()">TÍNH THÔNG SỐ CÒN LẠI</button>
+    <div class="result-box" id="resOhm">Nhập đúng 2 thông số bất kỳ rồi bấm tính...</div>
+  </div>
+
+  <div class="card">
+    <h2>2. Tính Công Suất Điện 3 Pha</h2>
+    <p>Tính công suất tác dụng P (W/kW), biểu kiến S (VA/kVA) và phản kháng Q (VAr).</p>
+    <div class="row-3">
+      <div><label>U dây (V):</label><input type="number" id="p3U" placeholder="380"></div>
+      <div><label>Dòng I (A):</label><input type="number" id="p3I" placeholder="Ampe"></div>
+      <div><label>Cos φ:</label><input type="number" step="0.01" id="p3Cos" placeholder="0.85"></div>
+    </div>
+    <button class="btn" onclick="calc3Phase()">TÍNH TẢI 3 PHA</button>
+    <div class="result-box" id="res3Phase">Nhập U, I, Cos φ rồi bấm tính...</div>
+  </div>
+
+  <div class="card">
+    <h2>3. Tính Sụt Áp Dây Dẫn Đồng</h2>
+    <p>Kiểm tra độ sụt áp trên dây dẫn 1 chiều / 1 pha (ρ đồng ≈ 0.0175 Ω·mm²/m).</p>
+    <div class="row">
+      <div><label>Điện áp nguồn U (V):</label><input type="number" id="vdU" placeholder="220"></div>
+      <div><label>Dòng tải I (A):</label><input type="number" id="vdI" placeholder="15"></div>
+    </div>
+    <div class="row">
+      <div><label>Chiều dài dây 1 chiều L (m):</label><input type="number" id="vdL" placeholder="30"></div>
+      <div><label>Tiết diện dây S (mm²):</label><input type="number" id="vdS" placeholder="2.5"></div>
+    </div>
+    <button class="btn" onclick="calcDrop()">TÍNH SỤT ÁP</button>
+    <div class="result-box" id="resDrop">Nhập thông số dây dẫn rồi bấm tính...</div>
+  </div>
+
+  <div class="card">
+    <h2>4. Thời Gian Chạy Ắc Quy / Pin</h2>
+    <p>Ước tính năng lượng Wh, dòng xả và thời gian chạy thực tế (~85% hiệu suất).</p>
+    <div class="row-3">
+      <div><label>Điện áp (V):</label><input type="number" id="batV" placeholder="12"></div>
+      <div><label>Dung lượng (Ah):</label><input type="number" id="batAh" placeholder="20"></div>
+      <div><label>Công suất tải (W):</label><input type="number" id="batW" placeholder="100"></div>
+    </div>
+    <button class="btn" onclick="calcBattery()">TÍNH THỜI GIAN PIN</button>
+    <div class="result-box" id="resBattery">Nhập V, Ah, Watt tải rồi bấm tính...</div>
+  </div>
+
+  <div class="card">
+    <h2>5. Phân Tần Loa Thụ Động Bậc 1 (L &amp; C)</h2>
+    <p>Tính giá trị cuộn cảm Low-pass cho Bass và tụ điện High-pass cho Treble.</p>
+    <div class="row">
+      <div><label>Trở kháng loa R (Ω):</label><input type="number" id="xoR" placeholder="8"></div>
+      <div><label>Tần số cắt Fc (Hz):</label><input type="number" id="xoF" placeholder="2500"></div>
+    </div>
+    <button class="btn" onclick="calcCrossover()">TÍNH L &amp; C PHÂN TẦN</button>
+    <div class="result-box" id="resCrossover">Nhập trở kháng R và tần số Fc rồi bấm tính...</div>
+  </div>
+</section>
+<section class="section" id="life">
+  <div class="card">
+    <h2>1. Lãi Kép &amp; Tích Lũy Định Kỳ</h2>
+    <p>Tính tổng vốn lẫn lãi sau nhiều kỳ có thêm khoản góp đều mỗi kỳ.</p>
+    <div class="row">
+      <div><label>Vốn ban đầu (đ):</label><input type="number" id="ciP" placeholder="10000000"></div>
+      <div><label>Góp thêm mỗi kỳ (đ):</label><input type="number" id="ciAdd" placeholder="1000000"></div>
+    </div>
+    <div class="row">
+      <div><label>Lãi suất mỗi kỳ (%):</label><input type="number" step="0.01" id="ciRate" placeholder="0.6"></div>
+      <div><label>Số kỳ (tháng/năm):</label><input type="number" id="ciN" placeholder="12"></div>
+    </div>
+    <button class="btn" onclick="calcCompound()">TÍNH LÃI KÉP</button>
+    <div class="result-box" id="resCompound">Nhập thông số rồi bấm tính...</div>
+  </div>
+
+  <div class="card">
+    <h2>2. Ước Tính Tiền Điện Nhanh</h2>
+    <p>Tính tiền điện theo sản lượng kWh và đơn giá (kèm tạm tính VAT 8%).</p>
+    <div class="row">
+      <div><label>Điện năng tiêu thụ (kWh):</label><input type="number" id="pwKwh" placeholder="150"></div>
+      <div><label>Đơn giá (đ/kWh):</label><input type="number" id="pwPrice" placeholder="2500"></div>
+    </div>
+    <button class="btn" onclick="calcPowerBill()">TÍNH TIỀN ĐIỆN</button>
+    <div class="result-box" id="resPowerBill">Nhập kWh và đơn giá rồi bấm tính...</div>
+  </div>
+
+  <div class="card">
+    <h2>3. Tính % Tăng / Giảm Biến Động</h2>
+    <p>So sánh mức chênh lệch phần trăm giữa giá cũ và giá mới.</p>
+    <div class="row">
+      <div><label>Giá trị cũ:</label><input type="number" id="dfOld" placeholder="100"></div>
+      <div><label>Giá trị mới:</label><input type="number" id="dfNew" placeholder="125"></div>
+    </div>
+    <button class="btn" onclick="calcDeltaPct()">TÍNH % BIẾN ĐỘNG</button>
+    <div class="result-box" id="resDeltaPct">Nhập giá trị cũ và mới rồi bấm tính...</div>
+  </div>
+
+  <div class="card">
+    <h2>4. Khối Lượng Theo Thể Tích &amp; Khối Lượng Riêng</h2>
+    <p>Tính khối lượng (kg, tấn) từ thể tích m³ và khối lượng riêng kg/m³.</p>
+    <div class="row">
+      <div><label>Thể tích V (m³):</label><input type="number" step="0.001" id="matV" placeholder="0.5"></div>
+      <div>
+        <label>Khối lượng riêng (kg/m³):</label>
+        <select id="matD">
+          <option value="7850">Thép thường (~7850 kg/m³)</option>
+          <option value="8960">Đồng (~8960 kg/m³)</option>
+          <option value="2700">Nhôm (~2700 kg/m³)</option>
+          <option value="1000">Nước (~1000 kg/m³)</option>
+          <option value="2400">Bê tông (~2400 kg/m³)</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn" onclick="calcMass()">TÍNH KHỐI LƯỢNG</button>
+    <div class="result-box" id="resMass">Nhập thể tích rồi bấm tính...</div>
+  </div>
+
+  <div class="card">
+    <h2>5. Chỉ Số BMI &amp; Năng Lượng Nền (BMR)</h2>
+    <p>Đánh giá thể trạng BMI và mức năng lượng cơ bản ước tính mỗi ngày.</p>
+    <div class="row-3">
+      <div><label>Cân nặng (kg):</label><input type="number" id="bmW" placeholder="60"></div>
+      <div><label>Chiều cao (cm):</label><input type="number" id="bmH" placeholder="171"></div>
+      <div><label>Tuổi:</label><input type="number" id="bmA" placeholder="16"></div>
+    </div>
+    <button class="btn" onclick="calcBMI()">TÍNH BMI &amp; BMR</button>
+    <div class="result-box" id="resBMI">Nhập cân nặng và chiều cao rồi bấm tính...</div>
+  </div>
+</section>
+
+<section class="section" id="accounting">
+  <div class="card">
+    <h2>Học Viên Kế Toán — Cơ Bản Đến Nâng Cao</h2>
+    <p>Học chắc từng nấc thang nghiệp vụ, nắm rõ bản chất, nhận diện nguy cơ sai sót và áp dụng mẹo kiểm soát để làm chuẩn nghề.</p>
+
+    <label>Chọn chuyên đề / cấp độ học:</label>
+    <select id="accTopic" onchange="renderAccountingLesson()">
+      <option value="c1_eq">1. Cơ bản: Phương trình kế toán &amp; Nợ - Có</option>
+      <option value="c2_doc">2. Cơ bản: Chứng từ gốc &amp; Định khoản chuẩn</option>
+      <option value="c3_cash_ar">3. Cơ bản - Trung cấp: Tiền mặt, ngân hàng &amp; công nợ</option>
+      <option value="c4_vat_inv">4. Trung cấp: Thuế GTGT, hóa đơn &amp; rà soát kê khai</option>
+      <option value="c5_inv_cost">5. Trung cấp: Tồn kho, giá vốn &amp; kiểm soát hao hụt</option>
+      <option value="c6_close">6. Nâng cao: Khóa sổ cuối kỳ, đối chiếu &amp; chống sai sót</option>
+    </select>
+
+    <div class="result-box" id="accLessonBox"></div>
+  </div>
+
+  <div class="card">
+    <h3>Thực Hành Nhanh: Thuế GTGT &amp; Thanh Toán</h3>
+    <div class="row">
+      <div>
+        <label>Giá trị trước thuế (đ):</label>
+        <input type="number" id="accNet" placeholder="VD: 10000000">
+      </div>
+      <div>
+        <label>Thuế suất (%):</label>
+        <select id="accVatRate">
+          <option value="0">0%</option>
+          <option value="5">5%</option>
+          <option value="8" selected>8%</option>
+          <option value="10">10%</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn" onclick="calcAccVat()">TÍNH TIỀN THUẾ &amp; TỔNG TIỀN</button>
+    <div class="result-box" id="resAccVat">Nhập giá trị trước thuế rồi bấm tính...</div>
+  </div>
+
+  <div class="card">
+    <h3>Thực Hành Nhanh: Đối Chiếu Sổ Sách vs Thực Tế</h3>
+    <div class="row">
+      <div>
+        <label>Số dư trên sổ kế toán (đ):</label>
+        <input type="number" id="accBook" placeholder="VD: 25500000">
+      </div>
+      <div>
+        <label>Số dư thực tế / sao kê / đối chiếu (đ):</label>
+        <input type="number" id="accActual" placeholder="VD: 25350000">
+      </div>
+    </div>
+    <button class="btn" onclick="calcAccReconcile()">KIỂM TRA CHÊNH LỆCH &amp; RỦI RO</button>
+    <div class="result-box" id="resAccReconcile">Nhập 2 số liệu để kiểm tra độ khớp và hướng xử lý...</div>
+  </div>
+</section>
+<section class="section" id="peace">
+  <div class="card">
+    <h2>🪷 Tịnh Tâm — Định Tâm &amp; Tỉnh Thức</h2>
+    <p>Không vẽ màu hồng giả tạo. Nhìn thẳng vào tâm trạng để hiểu vì sao rối, giữ gốc không nản và tự kéo mình về trạng thái cân bằng.</p>
+
+    <label>Trạng thái tâm hiện tại:</label>
+    <select id="calmState" onchange="renderCalmGuide()">
+      <option value="stuck">Bế tắc, hết đường xoay xở, cảm giác bị dồn ép</option>
+      <option value="no_reason">Buồn bã không rõ lý do, trống rỗng, chán chường</option>
+      <option value="frustrated">Ức chế, nóng giận, dễ bùng nổ vì chuyện không như ý</option>
+      <option value="exhausted">Kiệt sức, nản lòng, muốn buông xuôi mọi thứ</option>
+      <option value="dharma">Định tâm theo góc nhìn Phật pháp (Vô thường - Buông xả - Chánh niệm)</option>
+    </select>
+
+    <div class="result-box calm-box" id="calmBox"></div>
+  </div>
+
+  <div class="card">
+    <h3>Bài Tập Hạ Nhiệt Tâm Trí Nhanh (60 Giây)</h3>
+    <p>Khi đầu óc căng như dây đàn, đừng vội quyết định lớn. Chọn nhịp thở/tập trung bên dưới rồi bấm để định lại thần.</p>
+
+    <label>Chọn cách ổn định tâm trạng:</label>
+    <select id="calmDrill">
+      <option value="breath444">Thở 4 - 4 - 4 (Hít vào 4s • Giữ 4s • Thở ra chậm 4s)</option>
+      <option value="grounding">Neo thực tại 5-4-3 (Nhìn 5 vật • Chạm 4 bề mặt • Nghe 3 âm thanh)</option>
+      <option value="one_step">Thu nhỏ mục tiêu (Chỉ giải quyết đúng 1 việc nhỏ nhất trong 15 phút tới)</option>
+    </select>
+
+    <button class="btn btn-calm" onclick="runCalmStep()">BẮT ĐẦU MỘT CHU KỲ ĐỊNH TÂM</button>
+    <div class="result-box calm-box" id="resCalmStep">Chọn phương pháp và bấm nút để bắt đầu...</div>
+  </div>
+</section>
+
+<section class="section" id="skills">
+  <div class="card">
+    <h2>Kỹ Năng Sống &amp; Xử Lý Tình Huống Nguy Hiểm</h2>
+    <p>Giữ cái đầu lạnh, làm đúng thứ tự ưu tiên an toàn trước khi nghĩ tới bảo vệ tài sản.</p>
+
+    <label>Chọn tình huống cần xử lý:</label>
+    <select id="skillTopic" onchange="renderLifeSkill()">
+      <option value="short_circuit">1. Chập điện, đánh lửa, mùi khét dây điện</option>
+      <option value="fire">2. Hỏa hoạn, cháy trong nhà hoặc phòng kín</option>
+      <option value="gas_leak">3. Rò rỉ khí gas (nghe xì hoặc ngửi thấy mùi gas)</option>
+      <option value="burn">4. Bị bỏng (nước sôi, dầu nóng, nhiệt hoặc điện)</option>
+      <option value="choking_fall">5. Sơ cứu cơ bản: Hóc dị vật, choáng ngất, té ngã</option>
+      <option value="flood_storm">6. Mưa bão, ngập nước, đường trơn trượt nguy hiểm</option>
+    </select>
+
+    <div class="result-box" id="skillBox"></div>
+  </div>
+
+  <div class="card">
+    <h3>Checklist Phản Xạ 10 Giây Khi Gặp Sự Cố</h3>
+    <p>Kiểm tra nhanh mức độ nguy hiểm trước khi hành động để không tự biến mình thành nạn nhân thứ hai.</p>
+
+    <div class="row">
+      <div>
+        <label>Nguồn nguy hiểm chính:</label>
+        <select id="emerSource">
+          <option value="elec">Điện / Tia lửa</option>
+          <option value="fire">Lửa / Khói độc</option>
+          <option value="gas">Khí gas</option>
+          <option value="injury">Bỏng / Chấn thương</option>
+        </select>
+      </div>
+      <div>
+        <label>Có người kẹt hoặc bị thương không?</label>
+        <select id="emerVictim">
+          <option value="no">Không, đang an toàn</option>
+          <option value="yes">Có người bị thương / kẹt lại</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn" onclick="calcEmergencyPlan()">XUẤT PHƯƠNG ÁN ỨNG PHÓ NHANH</button>
+    <div class="result-box" id="resEmergencyPlan">Chọn tình huống để xem thứ tự ưu tiên hành động...</div>
+  </div>
+</section>
+
+<div class="watermark">@ThaiMion • LHCV: 0961818524</div>
+<script>
   document.querySelectorAll('.tab-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
       const targetId = this.getAttribute('data-tab');
@@ -605,7 +796,7 @@
     res.innerHTML = `• Cuộn cảm Bass (Low-pass L) ≈ <b>${fmt(L_mH)} mH</b><br>• Tụ điện Treble (High-pass C) ≈ <b>${fmt(C_uF)} µF</b>`;
   }
 
-  // ĐỜI SỐNG NÂNG CAO
+  // ĐỜI SỐNG
   function calcCompound() {
     const P = parseFloat(document.getElementById('ciP').value) || 0;
     const add = parseFloat(document.getElementById('ciAdd').value) || 0;
@@ -668,6 +859,233 @@
     else if (bmi >= 30) status = "Béo phì";
     res.innerHTML = `• Chỉ số BMI = <b>${fmt(bmi)}</b> (${status})<br>• Năng lượng nền (BMR) ≈ <b>${Math.round(bmr)} kcal/ngày</b>`;
   }
+
+  // HỌC VIÊN KẾ TOÁN
+  const ACCOUNTING_LESSONS = {
+    c1_eq: {
+      title: "Cấp 1 (Cơ bản): Phương Trình Kế Toán & Bản Chất Nợ - Có",
+      explain: "Mọi nghiệp vụ đều xoay quanh cân bằng: <b>Tài sản = Nợ phải trả + Vốn chủ sở hữu</b>. Nợ và Có chỉ là hai cột ghi chép của tài khoản kế toán. Tài sản & Chi phí tăng ghi <b>Nợ</b>, giảm ghi <b>Có</b>; Nợ phải trả, Vốn chủ sở hữu & Doanh thu tăng ghi <b>Có</b>, giảm ghi <b>Nợ</b>.",
+      risks: "Học vẹt 'Nợ là tăng, Có là giảm' dẫn tới ghi ngược chiều với tài khoản nguồn vốn/doanh thu; nhầm đồ mua về dùng dần hoặc bán ra thành chi phí ngay lập tức.",
+      tips: "Luôn tự hỏi 3 bước trước khi ghi: (1) Nghiệp vụ này đụng nhóm nào? (2) Tăng hay giảm? (3) Tổng tiền bên Nợ đã bằng tổng tiền bên Có chưa?"
+    },
+    c2_doc: {
+      title: "Cấp 2 (Cơ bản): Chứng Từ Gốc & Nguyên Tắc Định Khoản Chuẩn",
+      explain: "Chứng từ gốc (hóa đơn, phiếu thu/chi, giấy báo nợ/có, bảng lương, biên bản giao nhận) là bằng chứng xác thực nghiệp vụ phát sinh. Định khoản phải phản ánh đúng bản chất kinh tế của giao dịch.",
+      risks: "Định khoản theo thói quen nghe kể lại mà thiếu chứng từ hợp lệ; nhập nhầm số 0, đổi chỗ chữ số hoặc ghi nhầm ngày chứng từ sang kỳ khác.",
+      tips: "Áp dụng nguyên tắc <b>'Chứng từ rõ - Bản chất đúng - Số liệu khớp'</b>. Đọc lại số tiền bằng chữ và bằng số trước khi lưu bút toán."
+    },
+    c3_cash_ar: {
+      title: "Cấp 3 (Cơ bản - Trung cấp): Tiền Mặt, Ngân Hàng & Công Nợ",
+      explain: "Quản lý sát dòng tiền thực tế qua quỹ tiền mặt và tài khoản ngân hàng, đồng thời theo dõi chi tiết từng khách hàng (phải thu) và từng nhà cung cấp (phải trả) theo từng hóa đơn/đợt thanh toán.",
+      risks: "Thu tiền của khách A nhưng ghi nhầm vào công nợ khách B; thanh toán trễ hoặc bỏ sót một lần chuyển khoản nhỏ khiến công nợ treo sai kéo dài.",
+      tips: "Theo dõi công nợ chi tiết theo từng đối tượng và từng chứng từ, không gộp chung mù mờ. Định kỳ đối chiếu xác nhận công nợ để phát hiện lệch sớm."
+    },
+    c4_vat_inv: {
+      title: "Cấp 4 (Trung cấp): Thuế GTGT, Hóa Đơn & Rà Soát Kê Khai",
+      explain: "Thuế GTGT đầu ra gắn với doanh thu bán ra; thuế GTGT đầu vào gắn với mua hàng hóa, dịch vụ phục vụ hoạt động kinh doanh và cần đáp ứng đầy đủ điều kiện chứng từ, thanh toán theo quy định hiện hành.",
+      risks: "Áp nhầm mức thuế suất hoặc thời điểm phát sinh nghĩa vụ thuế; kê khai sót hoặc kê khai trùng hóa đơn; đưa chi phí không liên quan hoạt động kinh doanh vào khấu trừ.",
+      tips: "Đối chiếu danh sách hóa đơn với chứng từ thực tế và điều kiện khấu trừ/thanh toán trước khi chốt tờ khai. Kiểm tra kỹ ngày hóa đơn để không lệch kỳ kê khai."
+    },
+    c5_inv_cost: {
+      title: "Cấp 5 (Trung cấp): Tồn Kho, Giá Vốn & Kiểm Soát Hao Hụt",
+      explain: "Hàng tồn kho và giá vốn hàng bán quyết định trực tiếp biên lợi nhuận. Cần giữ nhất quán phương pháp tính giá xuất kho và theo dõi chặt chẽ nhập - xuất - tồn cả số lượng lẫn giá trị.",
+      risks: "Bán hàng ghi doanh thu nhưng quên ghi giá vốn hoặc tính sai giá vốn; âm kho trên sổ do nhập liệu trễ; bỏ sót hao hụt thực tế làm tồn kho sổ sách cao hơn thực tế.",
+      tips: "Kiểm kê kho định kỳ và đối chiếu chênh lệch ngay khi phát hiện. Mọi phần hao hụt, hư hỏng cần có biên bản và căn cứ xử lý minh bạch."
+    },
+    c6_close: {
+      title: "Cấp 6 (Nâng cao): Khóa Sổ Cuối Kỳ, Đối Chiếu & Chống Sai Sót",
+      explain: "Cuối kỳ kế toán cần rà soát toàn bộ tài khoản trung gian/tạm tính, thực hiện phân bổ và kết chuyển đúng thứ tự, đối chiếu ngân hàng - công nợ - kho và kiểm tra tính cân đối trước khi lập báo cáo.",
+      risks: "Khóa sổ vội khi còn số dư treo bất thường hoặc chưa khớp sao kê ngân hàng; kết chuyển thiếu/sai thứ tự làm báo cáo không phản ánh đúng thực trạng.",
+      tips: "Dùng <b>checklist khóa sổ theo thứ tự cố định</b>: Tiền &amp; ngân hàng -> Công nợ -> Kho &amp; phân bổ -> Thuế &amp; kết chuyển -> Rà soát số dư bất thường trước khi khóa sổ."
+    }
+  };
+
+  function renderAccountingLesson() {
+    const key = document.getElementById('accTopic').value;
+    const box = document.getElementById('accLessonBox');
+    const item = ACCOUNTING_LESSONS[key];
+    if (!item || !box) return;
+    box.innerHTML =
+      `<b>${item.title}</b><br><br>` +
+      `• <b>Giải thích bản chất:</b> ${item.explain}<br><br>` +
+      `• <b>Nguy cơ sai sót:</b> ${item.risks}<br><br>` +
+      `• <b>Mẹo làm không sai:</b> ${item.tips}`;
+  }
+
+  function calcAccVat() {
+    const net = parseFloat(document.getElementById('accNet').value);
+    const rate = parseFloat(document.getElementById('accVatRate').value);
+    const res = document.getElementById('resAccVat');
+    if (isNaN(net) || net < 0) {
+      res.innerHTML = "⚠️ Nhập giá trị trước thuế hợp lệ (>= 0) đi ní!";
+      return;
+    }
+    const vat = net * (rate / 100);
+    const gross = net + vat;
+    res.innerHTML =
+      `• Giá trị trước thuế: <b>${fmtMoney(net)}</b><br>` +
+      `• Tiền thuế GTGT (${rate}%): <b>${fmtMoney(vat)}</b><br>` +
+      `• Tổng thanh toán sau thuế: <b>${fmtMoney(gross)}</b>`;
+  }
+
+  function calcAccReconcile() {
+    const book = parseFloat(document.getElementById('accBook').value);
+    const actual = parseFloat(document.getElementById('accActual').value);
+    const res = document.getElementById('resAccReconcile');
+    if (isNaN(book) || isNaN(actual)) {
+      res.innerHTML = "⚠️ Nhập đủ cả 2 số liệu để đối chiếu!";
+      return;
+    }
+    const diff = actual - book;
+    if (diff === 0) {
+      res.innerHTML = "• Kết quả: <b>Khớp hoàn toàn (0 đ)</b> — Không có chênh lệch giữa sổ và số đối chiếu.";
+      return;
+    }
+    const absDiff = Math.abs(diff);
+    const dir = diff > 0 ? "Thực tế / đối chiếu <b>lớn hơn</b> sổ" : "Thực tế / đối chiếu <b>nhỏ hơn</b> sổ";
+    res.innerHTML =
+      `• Chênh lệch: <b>${diff > 0 ? '+' : '-'}${fmtMoney(absDiff)}</b> (${dir})<br>` +
+      `• Nguy cơ: Có thể sót chứng từ, nhập nhầm số, sai kỳ hoặc phát sinh hao hụt/công nợ chưa chốt.<br>` +
+      `• Mẹo rà soát: Lọc các bút toán gần ngày chốt sổ và kiểm tra các khoản có giá trị quanh mức <b>${fmtMoney(absDiff)}</b>.`;
+  }
+    // TỊNH TÂM KHI BUỒN
+  const CALM_GUIDES = {
+    stuck: {
+      title: "Khi Thấy Bế Tắc & Hết Đường Xoay Xở",
+      truth: "Cảm giác 'hết đường' thường là lúc tâm trí bị dồn vào một góc hẹp nên chỉ thấy tường, không thấy lối rẽ. Khó khăn thật có thể nặng, nhưng tâm hoảng loạn đang nhân đôi sức nặng đó lên gấp mấy lần.",
+      dharma: "Trong đạo Phật gọi là <b>tâm bị che mờ bởi phiền não (sân, si, sợ hãi)</b>. Khi nước đục thì không soi mặt được; muốn thấy đáy nước phải để lắng, chứ không phải khuấy thêm cho đục.",
+      action: "Đừng cố giải quyết cả tương lai trong lúc đầu đang rối. Hạ nhịp thở, giữ mình an toàn trước, tách việc nào làm được ngay hôm nay và việc nào phải chờ đủ điều kiện mới làm."
+    },
+    no_reason: {
+      title: "Khi Buồn Không Rõ Lý Do, Trống Rỗng",
+      truth: "Buồn không lý do đa phần đến từ việc cơ thể và hệ thần kinh tích tụ mệt mỏi, thiếu ngủ, quá tải thông tin hoặc kìm nén cảm xúc quá lâu mà không có chỗ xả.",
+      dharma: "Cảm xúc sinh ra rồi diệt đi như mây trôi ngang bầu trời — bầu trời không hề bị mây làm hư hại. Thấy buồn thì biết là đang buồn, không cần tự trách sao mình lại yếu đuối hay vô cớ.",
+      action: "Uống một ly nước, rửa mặt, đi bộ thả lỏng hoặc nằm nghỉ yên tĩnh một lúc. Không ép bản thân phải vui ngay lập tức khi cơ thể đang cần hồi pin."
+    },
+    frustrated: {
+      title: "Khi Ức Chế, Nóng Giận, Dễ Bùng Nổ",
+      truth: "Lúc đang ức chế, mọi lời nói và hành động của bạn rất dễ gây ra quyết định sai lầm hoặc làm rạn nứt thêm các mối quan hệ xung quanh.",
+      dharma: "Giận dữ giống như cầm than nóng ném vào người khác — kẻ bỏng tay trước tiên chính là người cầm than. Thấy lửa giận bốc lên thì dừng lại một nhịp, đừng phản ứng theo quán tính.",
+      action: "Rời khỏi chỗ đang gây căng thẳng vài phút. Im lặng có chủ đích lúc này không phải là thua, mà là giữ phần thắng cho sự tỉnh táo của mình."
+    },
+    exhausted: {
+      title: "Khi Kiệt Sức & Muốn Buông Xuôi",
+      truth: "Muốn buông xuôi đôi khi không phải vì bạn hèn, mà vì bạn đã gồng quá lâu mà không được nghỉ ngơi đúng nghĩa.",
+      dharma: "Biết dừng lại đúng lúc để nghỉ ngơi, buông bớt những đòi hỏi quá sức với bản thân là trí tuệ, không phải bỏ cuộc. Còn thở, còn tỉnh táo là còn cơ hội làm lại từng bước.",
+      action: "Cho phép mình nghỉ một nhịp thật sự: ngủ đủ giấc, ăn uống đàng hoàng, giảm bớt tiếng ồn và sự so sánh với người khác."
+    },
+    dharma: {
+      title: "Định Tâm Theo Góc Nhìn Phật Pháp Ứng Dụng",
+      truth: "Đời sống luôn biến đổi (<b>Vô thường</b>): thuận lợi rồi cũng qua, nghịch cảnh rồi cũng đổi chiều. Chấp chặt vào một kết quả cố định sẽ dễ sinh khổ khi mọi thứ không theo ý.",
+      dharma: "Hiểu <b>Nhân - Quả</b> để không oán trời trách người mù quáng, đồng thời không tự dằn vặt quá mức: nhân cũ đã gieo thì nhận quả với tâm tỉnh thức, hôm nay gieo lại nhân lành và thực tế.",
+      action: "Giữ <b>Chánh niệm</b> ở hơi thở và bước chân hiện tại. Bớt tham vọng cầu toàn tức thì, bớt sân hận, giữ tâm sáng để nhìn ra đường đi đúng."
+    }
+  };
+
+  function renderCalmGuide() {
+    const key = document.getElementById('calmState').value;
+    const box = document.getElementById('calmBox');
+    const item = CALM_GUIDES[key];
+    if (!item || !box) return;
+    box.innerHTML =
+      `<b>${item.title}</b><br><br>` +
+      `• <b>Nhìn thẳng bản chất:</b> ${item.truth}<br><br>` +
+      `• <b>Góc nhìn định tâm / Phật pháp:</b> ${item.dharma}<br><br>` +
+      `• <b>Cách tự kéo mình lại:</b> ${item.action}`;
+  }
+
+  function runCalmStep() {
+    const mode = document.getElementById('calmDrill').value;
+    const res = document.getElementById('resCalmStep');
+    if (mode === 'breath444') {
+      res.innerHTML =
+        "• <b>Nhịp 1:</b> Hít vào chậm qua mũi trong <b>4 giây</b>.<br>" +
+        "• <b>Nhịp 2:</b> Giữ hơi nhẹ nhàng trong <b>4 giây</b> (không gồng cứng).<br>" +
+        "• <b>Nhịp 3:</b> Thở ra đều, kéo dài trong <b>4 giây</b>.<br>" +
+        "• Lặp lại <b>4 vòng</b> là nhịp tim và đầu óc sẽ dịu xuống rõ rệt.";
+    } else if (mode === 'grounding') {
+      res.innerHTML =
+        "• Nhìn xung quanh và gọi tên <b>5 vật</b> đang thấy.<br>" +
+        "• Chạm tay vào <b>4 bề mặt</b> và cảm nhận nhiệt độ/độ nhám.<br>" +
+        "• Lắng nghe <b>3 âm thanh</b> thật gần tai mà không phán xét hay/dở.<br>" +
+        "• Cách này kéo tâm trí từ mớ suy nghĩ hỗn loạn quay về hiện tại.";
+    } else {
+      res.innerHTML =
+        "• Tạm gác mọi chuyện xa xôi sang một bên.<br>" +
+        "• Chọn đúng <b>1 việc nhỏ nhất, dễ làm nhất</b> ngay lúc này.<br>" +
+        "• Đặt mốc <b>15 phút</b> làm xong việc đó — làm được một việc nhỏ là đã phá được thế đứng im.";
+    }
+  }
+
+  // KỸ NĂNG SỐNG
+  const LIFE_SKILLS = {
+    short_circuit: {
+      title: "Chập Điện, Đánh Lửa, Có Mùi Khét Dây Điện",
+      steps: "1. <b>Ngắt nguồn điện ngay lập tức</b> tại cầu dao tổng / CB (không chạm tay trần vào thiết bị ẩm ướt hoặc dây đang rò).<br>2. Nếu có tia lửa nhỏ kèm khói nhẹ sau khi ngắt điện, theo dõi sát; nếu lửa lan thì chuyển sang xử lý hỏa hoạn.<br>3. Tuyệt đối <b>không tạt nước</b> khi chưa ngắt hẳn nguồn điện để tránh điện giật.",
+      tip: "Kiểm tra lại tiết diện dây, mối nối lỏng, ổ cắm quá tải và aptomat chống rò/quá tải trước khi đóng điện trở lại."
+    },
+    fire: {
+      title: "Hỏa Hoạn, Cháy Trong Nhà Hoặc Phòng Kín",
+      steps: "1. Hô báo cho mọi người xung quanh và <b>ưu tiên thoát người ra ngoài trước</b>, không quay lại lấy đồ lặt vặt.<br>2. Di chuyển ở <b>tư thế cúi thấp người</b> (khói độc và khí nóng bay lên trên), dùng khăn ẩm che mũi/miệng nếu có khói.<br>3. Trước khi mở cửa phòng khác, dùng mu bàn tay kiểm tra độ nóng của tay nắm cửa; nếu nóng rát thì tìm lối thoát khác.",
+      tip: "Gọi lực lượng cứu hỏa (114 tại Việt Nam) ngay khi đám cháy vượt tầm kiểm soát ban đầu."
+    },
+    gas_leak: {
+      title: "Rò Rỉ Khí Gas (Nghe Xì Hoặc Ngửi Thấy Mùi Gas)",
+      steps: "1. <b>Khóa ngay van bình gas</b> nếu an toàn và mở thoáng cửa tự nhiên để khí gas thoát ra ngoài.<br>2. <b>Tuyệt đối không bật/tắt công tắc điện, quạt điện, đèn, bật lửa hoặc dùng nguồn lửa/tia lửa</b> gần khu vực có mùi gas.<br>3. Đưa người ra khu vực thông thoáng, không khí sạch; nếu nghi rò rỉ nặng không khóa được van, rời khỏi khu vực ngay và báo hỗ trợ.",
+      tip: "Định kỳ kiểm tra dây dẫn gas, cổ dê siết chặt và khóa van gas sau khi nấu ăn xong."
+    },
+    burn: {
+      title: "Bị Bỏng (Nước Sôi, Dầu Nóng, Nhiệt Hoặc Điện)",
+      steps: "1. Làm mát vùng bỏng ngay bằng <b>nước sạch mát (không dùng nước đá lạnh trực tiếp)</b> trong khoảng 15–20 phút để giảm tổn thương sâu.<br>2. Nhẹ nhàng tháo bỏ nhẫn, vòng, đồng hồ hoặc vật siết quanh vùng bỏng trước khi bị sưng nề (không cố lột quần áo dính chặt vào vết bỏng).<br>3. Che phủ nhẹ nhàng bằng gạc sạch hoặc vải sạch, thoáng khí.",
+      tip: "<b>Không bôi kem đánh răng, nước mắm, dầu ăn, bã cà phê hay mẹo dân gian bậy bạ</b> lên vết bỏng; với bỏng rộng, bỏng sâu, bỏng mặt/khớp hoặc bỏng điện, đi cơ sở y tế ngay."
+    },
+    choking_fall: {
+      title: "Sơ Cứu Cơ Bản: Hóc Dị Vật, Choáng Ngất, Té Ngã",
+      steps: "1. Với người bị hóc còn ho/nói được: khuyến khích ho mạnh; nếu tắc nghẽn đường thở nặng, thực hiện vỗ lưng/ấn bụng đúng kỹ thuật hoặc nhờ người có chuyên môn hỗ trợ ngay.<br>2. Với người choáng ngất/té ngã: giữ đường thở thông thoáng, cho nằm ở nơi thoáng mát, không lay giật mạnh hoặc đổ nước/thức ăn vào miệng khi người đó chưa tỉnh táo hoàn toàn.<br>3. Nếu có dấu hiệu đau ngực dữ dội, khó thở, yếu liệt, chảy máu nhiều hoặc chấn thương đầu/cổ, gọi cấp cứu ngay.",
+      tip: "Giữ bình tĩnh, gọi người hỗ trợ xung quanh và theo dõi sát nhịp thở của nạn nhân."
+    },
+    flood_storm: {
+      title: "Mưa Bão, Ngập Nước, Đường Trơn Trượt",
+      steps: "1. Tránh đi qua vùng ngập sâu, dòng nước chảy xiết hoặc khu vực có dây điện đứt/trụ điện ngập nước.<br>2. Khi đi xe qua đoạn ngập hoặc trơn trượt: giữ tay lái vững, đi chậm đều ga, tránh phanh gấp và chú ý hố/nắp cống bị che khuất.<br>3. Gia cố cửa/mái che trước gió lớn, tránh trú dưới cây cao hoặc biển hiệu lỏng lẻo khi giông sét.",
+      tip: "Luôn giữ điện thoại đủ pin, mang áo mưa gọn và chủ động lên đường sớm khi trời chuyển mưa lớn."
+    }
+  };
+
+  function renderLifeSkill() {
+    const key = document.getElementById('skillTopic').value;
+    const box = document.getElementById('skillBox');
+    const item = LIFE_SKILLS[key];
+    if (!item || !box) return;
+    box.innerHTML =
+      `<b>${item.title}</b><br><br>` +
+      `• <b>Các bước xử lý ưu tiên:</b><br>${item.steps}<br><br>` +
+      `• <b>Lưu ý sống còn:</b> ${item.tip}`;
+  }
+
+  function calcEmergencyPlan() {
+    const src = document.getElementById('emerSource').value;
+    const victim = document.getElementById('emerVictim').value;
+    const res = document.getElementById('resEmergencyPlan');
+
+    let action1 = "";
+    if (src === 'elec') action1 = "Ngắt nguồn điện / CB trước, không chạm người/vật đang mang điện.";
+    if (src === 'fire') action1 = "Cảnh báo cháy, thoát khỏi vùng khói lửa theo hướng an toàn, cúi thấp người.";
+    if (src === 'gas') action1 = "Khóa van gas nếu an toàn, mở thoáng khí, cấm tuyệt đối tia lửa / bật tắt điện.";
+    if (src === 'injury') action1 = "Đưa nạn nhân ra khỏi vùng nguy hiểm, làm mát bỏng bằng nước sạch / cầm máu / giữ thông thoáng đường thở.";
+
+    const action2 = victim === 'yes'
+      ? "Có người bị thương/kẹt: ưu tiên hỗ trợ đưa ra vùng an toàn (nếu không gây nguy hiểm thêm cho bản thân) và gọi hỗ trợ y tế / cứu hộ khẩn cấp ngay."
+      : "Chưa có người bị thương: giữ khoảng cách an toàn, không quay lại khu vực nguy hiểm khi chưa chắc chắn.";
+
+    res.innerHTML =
+      `• <b>Bước 1 (An toàn nguồn):</b> ${action1}<br>` +
+      `• <b>Bước 2 (Con người):</b> ${action2}<br>` +
+      `• <b>Nguyên tắc:</b> Không tự đặt mình vào chỗ chết; gọi lực lượng hỗ trợ kịp thời khi vượt khả năng xử lý tại chỗ.`;
+  }
+
+  renderAccountingLesson();
+  renderCalmGuide();
+  renderLifeSkill();
 </script>
 
 </body>
